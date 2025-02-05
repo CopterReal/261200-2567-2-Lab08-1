@@ -1,0 +1,58 @@
+import java.util.Random;
+
+class NumberPrinter extends Thread {
+    private int threadNumber;
+    private Random random = new Random();
+
+    public NumberPrinter(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
+
+    @Override
+    public void run() {
+        for (int x = 1; x <= 50; x++) {
+            System.out.println("thread #" + threadNumber + ": " + x);
+            try {
+                Thread.sleep(random.nextInt(100)); // Random delay up to 100ms
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+
+        NumberPrinter thread1 = new NumberPrinter(1);
+        NumberPrinter thread2 = new NumberPrinter(2);
+        NumberPrinter thread3 = new NumberPrinter(3);
+
+        // สังเกตพฤติกรรมของเธรดก่อนเพิ่ม Thread.sleep()
+        // เมื่อไม่มีการหน่วงเวลา เธรดแต่ละตัวจะพิมพ์ค่าของมันต่อเนื่องกันและผลลัพธ์มักจะสลับกันไปมา
+
+        thread1.start();
+        thread2.start();
+        thread3.start();
+
+        // สังเกตผลลัพธ์หลังจากเพิ่ม Thread.sleep()
+        // เนื่องจากแต่ละเธรดมีการหน่วงเวลาที่แตกต่างกัน ผลลัพธ์ที่พิมพ์ออกมาจะมีลำดับที่เปลี่ยนแปลงไปตามการทำงานของระบบ
+    }
+}
+
+
+// สังเกตพฤติกรรมของเธรด
+
+//1. ก่อนเพิ่ม Thread.sleep():
+//   - เธรดทั้ง 3 ตัวทำงานพร้อมกันและผลลัพธ์อาจสลับกันไปมาแบบไม่แน่นอน
+//   - บางครั้งเธรดหนึ่งอาจพิมพ์ตัวเลขติดต่อกันหลายค่าเนื่องจากความเร็วของ CPU
+
+//2. หลังเพิ่ม Thread.sleep():
+//   - การพิมพ์ค่ามีความไม่แน่นอนมากขึ้นเพราะแต่ละเธรดมีเวลาหน่วงที่แตกต่างกัน
+//  - ลำดับการพิมพ์เปลี่ยนไปทุกครั้งที่รันโปรแกรม
+
+//### การทำงานของ Multithreading ใน Java ###
+//- Java ใช้ Thread เพื่อรันโค้ดหลายส่วนพร้อมกัน ทำให้โปรแกรมทำงานได้เร็วขึ้น
+//- เมื่อเธรดเริ่มทำงาน มันอาจถูกสลับออกชั่วคราวโดยระบบปฏิบัติการเพื่อให้เธรดอื่นทำงาน
+//- การใช้ Thread.sleep() ทำให้เธรดหยุดพักชั่วคราว ซึ่งส่งผลให้ลำดับการทำงานเปลี่ยนไปในแต่ละรอบ
+//
